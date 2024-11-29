@@ -1,36 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Researcher Details</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <div class="container">
-        <a href="index.html" class="back-button">← Back to Search</a>
-        <div id="researcherInfo" class="researcher-info">
-            <h1>Researcher Details</h1>
-            <div id="basicInfo"></div>
-        </div>
-        <div class="stats-container">
-            <div class="chart-container">
-                <canvas id="citationsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="publicationsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="yearCitationsChart"></canvas>
-            </div>
-        </div>
-        <div id="publicationsList" class="publications-list"></div>
-    </div>
-    <script src="details.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,13 +7,80 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        .container-details {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .compare-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .compare-button:hover {
+            background-color: #45a049;
+        }
+
+        .researcher-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .basic-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .basic-info-card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .basic-info-card:hover {
+            transform: scale(1.05);
+        }
+
+        .basic-info-card h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+            font-size: 1rem;
+        }
+
+        .basic-info-card p {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
         .stats-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin: 20px 0;
         }
-        
+
         .chart-row {
             grid-column: 1 / -1;
             display: grid;
@@ -55,27 +89,40 @@
         }
 
         .chart-container {
-            background: #111; /* Slightly lighter than the page background */
+            background: #111;
             padding: 1.5rem;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .chart-container canvas {
-            max-width: 100%; /* Responsive canvas */
+            max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .basic-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .basic-info-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container-details">
         <a href="index.html" class="back-button">← Back to Search</a>
+        
+        
         <div id="researcherInfo" class="researcher-info">
             <h1>Researcher Details</h1>
-            <div id="basicInfo"></div>
+            <div id="basicInfo" class="basic-info-grid"></div>
         </div>
         
         <div class="stats-container">
-            <!-- First row of charts -->
             <div class="chart-row">
                 <div class="chart-container">
                     <canvas id="citationsChart"></canvas>
@@ -84,8 +131,6 @@
                     <canvas id="publicationsChart"></canvas>
                 </div>
             </div>
-            
-            <!-- Second row of charts -->
             <div class="chart-row">
                 <div class="chart-container">
                     <canvas id="yearCitationsChart"></canvas>
@@ -95,7 +140,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="publicationsList" class="publications-list"></div>
     </div>
     <script src="details.js"></script>

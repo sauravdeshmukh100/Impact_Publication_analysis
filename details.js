@@ -12,38 +12,37 @@ const name = urlParams.get('name');
 
 // Get researcher data from session storage or fetch if not available
 async function getResearcherData() {
-    let researcherData = sessionStorage.getItem(`researcher_${orcid}`);
-    
-    if (!researcherData) {
-        // If data isn't in session storage, fetch it
-        try {
-            const response = await fetch(`${API_BASE_URL}?filter=orcid:${orcid}&rows=1000&mailto=${MAILTO}`);
-            const data = await response.json();
-            
-            // Filter publications for this researcher
-            const publications = data.message.items.filter(item =>
-                item.author?.some(a => 
-                    a.ORCID?.replace('http://orcid.org/', '') === orcid
-                )
-            );
-
-            researcherData = {
-                name: name,
-                publications: publications
-            };
-
-            // Store in session storage
-            sessionStorage.setItem(`researcher_${orcid}`, JSON.stringify(researcherData));
-        } catch (error) {
-            console.error('Error fetching researcher data:', error);
-            showError('Error loading researcher data');
-            return null;
-        }
-    } else {
-        researcherData = JSON.parse(researcherData);
+  let researcherData = sessionStorage.getItem(`researcher_${orcid}`);
+  if (!researcherData) {
+    // If data isn't in session storage, fetch it
+    try {
+      const response = await fetch(`${API_BASE_URL}?filter=orcid:${orcid}&rows=1000&mailto=${MAILTO}`);
+      const data = await response.json();
+      
+      // Filter publications for this researcher
+      const publications = data.message.items.filter(item =>
+        item.author?.some(a =>
+          a.ORCID?.replace('http://orcid.org/', '') === orcid
+        )
+      );
+      
+      researcherData = {
+        name: name,
+        orcid: orcid, // Add this line to store the ORCID
+        publications: publications
+      };
+      
+      // Store in session storage
+      sessionStorage.setItem(`researcher_${orcid}`, JSON.stringify(researcherData));
+    } catch (error) {
+      console.error('Error fetching researcher data:', error);
+      showError('Error loading researcher data');
+      return null;
     }
-    
-    return researcherData;
+  } else {
+    researcherData = JSON.parse(researcherData);
+  }
+  return researcherData;
 }
 
 function showError(message) {
@@ -62,37 +61,50 @@ function displayBasicInfo(researcherData) {
     
     // Calculate average citations
     const averageCitations = citationCounts.length > 0 ?
-      (totalCitations / citationCounts.length).toFixed(2) : 0;
+        (totalCitations / citationCounts.length).toFixed(2) : 0;
     
     // Calculate h-index
     const sortedCitations = [...citationCounts].sort((a, b) => b - a);
     let hIndex = 0;
     for (let i = 0; i < sortedCitations.length; i++) {
-      if (sortedCitations[i] >= (i + 1)) {
-        hIndex = i + 1;
-      } else {
-        break;
-      }
+        if (sortedCitations[i] >= (i + 1)) {
+            hIndex = i + 1;
+        } else {
+            break;
+        }
     }
     
     // Calculate i10-index (number of publications with at least 10 citations)
     const i10Index = citationCounts.filter(count => count >= 10).length;
     
-    // Find highest and lowest citations
-    const highestCitations = Math.max(...citationCounts);
-    const lowestCitations = Math.min(...citationCounts);
-    
-    // Update basic info div
+   // Update researcher name in the header
+   const researcherNameElement = document.querySelector('.researcher-info h1');
+   researcherNameElement.textContent = researcherData.name;
+
+    // Prepare the basic info cards HTML
     const basicInfoDiv = document.getElementById('basicInfo');
     basicInfoDiv.innerHTML = `
-      <h2>${researcherData.name}</h2>
-      <p>ORCID: ${researcherData.orcid}</p>
-      <p>Total Publications: ${publications.length}</p>
-      <p>Total Citations: ${totalCitations}</p>
-      <p>H-Index: ${hIndex}</p>
-      <p>i10-Index: ${i10Index}</p>
+      
+        <div class="basic-info-card">
+            <h3>Total Publications</h3>
+            <p>${publications.length}</p>
+        </div>
+        <div class="basic-info-card">
+            <h3>Total Citations</h3>
+            <p>${totalCitations}</p>
+        </div>
+        <div class="basic-info-card">
+            <h3>H-Index</h3>
+            <p>${hIndex}</p>
+        </div>
+        <div class="basic-info-card">
+            <h3>i10-Index</h3>
+            <p>${i10Index}</p>
+        </div>
     `;
-  }
+}
+
+
 
 function displayPublications(researcherData) {
     // Create a global or module-scoped object to store abstracts
