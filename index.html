@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publication Impact Statistics</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <a href="index.html"><h1>Publication Impact Statistics</h1></a>
+    <nav>
+        <a href="https://sauravdeshmukh100.github.io/html-personal-web-site/" target="_blank">Saurav</a>
+        <a href="https://bhautik979.github.io/" target="_blank">Bhautik</a>
+        <a href="https://viralongit.github.io/portfolio/" target="_blank">Viral</a>
+        <a href="https://parth-babariya.github.io/My_site/" target="_blank">Parth</a>
+        <a href="https://jayantjha.me/" target="_blank">Jayant</a>
+    </nav>
+</header>
+
+<!-- Main Container -->
+<div class="container">
+    <div class="search-container">
+        <!-- Input and Button -->
+        <input type="text" id="searchInput" placeholder="Name of researcher or ORCID">
+        <button id="searchButton" onclick="searchResearcher()">Search</button>
+    </div>
+
+    <div id="loading" class="hidden">
+        <div class="spinner"></div>
+    </div>
+    <div id="error" class="error hidden"></div>
+
+    <!-- Results Div -->
+    <div id="results" class="results hidden"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+    © 2024 SSD Project Team
+</footer>
+
+<!-- JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>

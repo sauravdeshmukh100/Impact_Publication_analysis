@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Researcher Comparison</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="comparison.css">
+</head>
+<body>
+    <div class="container">
+        <div id="firstResearcher" class="researcher-column">
+            <div id="firstResearcherInfo"></div>
+            <div id="firstResearcherCharts" class="charts-grid">
+                <div class="chart-container">
+                    <canvas id="firstCitationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="firstYearCitationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="firstCitationPerPublicationChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="firstPublicationsChart"></canvas>
+                </div>
+            </div>
+            <div id="firstResearcherPublications"></div>
+        </div>
+        
+        <div id="secondResearcher" class="researcher-column">
+            <div id="secondResearcherSearch">
+                <h2>Select Second Researcher</h2>
+                <input type="text" id="searchInput" placeholder="Enter name or ORCID">
+                <button onclick="searchSecondResearcher()">Search</button>
+                <div id="searchResults"></div>
+            </div>
+            <div id="secondResearcherInfo"></div>
+            <div id="secondResearcherCharts" class="charts-grid hidden">
+                <div class="chart-container">
+                    <canvas id="secondCitationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="secondYearCitationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="secondCitationPerPublicationChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="secondPublicationsChart"></canvas>
+                </div>
+            </div>
+            <div id="secondResearcherPublications"></div>
+        </div>
+    </div>
+    <div id="loading" class="hidden">Loading...</div>
+    <div id="error" class="hidden"></div>
+    <script src="script.js"></script>
+    <script src="comparison.js"></script>
+</body>
+</html>

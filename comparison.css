@@ -1,0 +1,246 @@
+body {
+  font-family: 'Quicksand', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1800px;
+  margin: 2rem auto;
+  padding: 20px;
+  background: #111;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+
+.researcher-column {
+  width: 48%;
+  padding: 1rem;
+  background: #111;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.researcher-info {
+  background: rgba(43, 43, 43, 0.8);
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.researcher-info h2 {
+  margin-top: 0;
+  color: #f1c40f;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.chart-container {
+  background: rgba(43, 43, 43, 0.8);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+#secondResearcherSearch {
+  background: rgba(43, 43, 43, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 15px;
+}
+
+#searchInput {
+  width: 70%;
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+}
+
+button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 200px;
+}
+
+
+.search-container button:hover {
+  background-color: #000;
+  color: #fff;
+  border: #ffffff 2px solid;
+  transform: scale(1.05);
+}
+
+
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.researcher-option {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+}
+
+.researcher-option:hover {
+  background-color: rgba(241, 243, 245, 0);
+}
+
+
+#firstResearcherPublications, #secondResearcherPublications {
+  margin-top: 20px;
+}
+
+.publication-item {
+  background: rgba(43, 43, 43, 0.8);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.publication-item h4 {
+  margin: 0 0 5px;
+  color: #fff;
+}
+
+.publication-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  background: rgba(43, 43, 43, 0.8);
+  color: #f1c40f;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .researcher-column {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .researcher-column {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .container {
+    padding: 5px;
+  }
+
+  .search-container {
+    flex-direction: column;
+  }
+
+  #searchInput {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .charts-grid {
+    gap: 10px;
+  }
+
+  .publication-item {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .researcher-card {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .chart-container {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .back-button, .compare-btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .publication-item {
+    padding: 0.8rem;
+  }
+}

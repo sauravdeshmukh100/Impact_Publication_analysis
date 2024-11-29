@@ -1,0 +1,103 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Researcher Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Search</a>
+        <div id="researcherInfo" class="researcher-info">
+            <h1>Researcher Details</h1>
+            <div id="basicInfo"></div>
+        </div>
+        <div class="stats-container">
+            <div class="chart-container">
+                <canvas id="citationsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="publicationsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="yearCitationsChart"></canvas>
+            </div>
+        </div>
+        <div id="publicationsList" class="publications-list"></div>
+    </div>
+    <script src="details.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Researcher Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .chart-row {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .chart-container {
+            background: #111; /* Slightly lighter than the page background */
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-container canvas {
+            max-width: 100%; /* Responsive canvas */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-details">
+        <a href="index.html" class="back-button">← Back to Search</a>
+        <div id="researcherInfo" class="researcher-info">
+            <h1>Researcher Details</h1>
+            <div id="basicInfo"></div>
+        </div>
+        
+        <div class="stats-container">
+            <!-- First row of charts -->
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="citationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="publicationsChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Second row of charts -->
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="yearCitationsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="citationPerPublicationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="publicationsList" class="publications-list"></div>
+    </div>
+    <script src="details.js"></script>
+</body>
+</html>
