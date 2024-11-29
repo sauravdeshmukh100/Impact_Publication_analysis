@@ -22,15 +22,34 @@ function displayFirstResearcherDetails(researcherData) {
     const infoDiv = document.getElementById('firstResearcherInfo');
     const publicationsDiv = document.getElementById('firstResearcherPublications');
     
+    const publications = researcherData.publications;
+    const citationCounts = publications.map(pub => pub['is-referenced-by-count'] || 0);
 
     const totalCitations = researcherData.publications.reduce((sum, pub) => 
         sum + (pub['is-referenced-by-count'] || 0), 0);
     
 
+     // Calculate h-index
+     const sortedCitations = [...citationCounts].sort((a, b) => b - a);
+     let hIndex = 0;
+     for (let i = 0; i < sortedCitations.length; i++) {
+       if (sortedCitations[i] >= (i + 1)) {
+         hIndex = i + 1;
+       } else {
+         break;
+       }
+     }
+     
+     // Calculate i10-index (number of publications with at least 10 citations)
+     const i10Index = citationCounts.filter(count => count >= 10).length;
+
     infoDiv.innerHTML = `
         <h2>${researcherData.name}</h2>
         <p>Total Publications: ${researcherData.publications.length}</p>
         <p>Total Citations: ${totalCitations}</p>
+        <p>H-Index: ${hIndex}</p>
+        <p>i10-Index: ${i10Index}</p>
+        
     `;
     
 
@@ -48,15 +67,34 @@ function displaySecondResearcherDetails(researcherData) {
     const chartsDiv = document.getElementById('secondResearcherCharts');
     const publicationsDiv = document.getElementById('secondResearcherPublications');
     
+    const publications = researcherData.publications;
+    const citationCounts = publications.map(pub => pub['is-referenced-by-count'] || 0);
+    
 
     const totalCitations = researcherData.publications.reduce((sum, pub) => 
         sum + (pub['is-referenced-by-count'] || 0), 0);
+
+    // Calculate h-index
+    const sortedCitations = [...citationCounts].sort((a, b) => b - a);
+    let hIndex = 0;
+    for (let i = 0; i < sortedCitations.length; i++) {
+      if (sortedCitations[i] >= (i + 1)) {
+        hIndex = i + 1;
+      } else {
+        break;
+      }
+    }
+    
+    // Calculate i10-index (number of publications with at least 10 citations)
+    const i10Index = citationCounts.filter(count => count >= 10).length;
     
 
     infoDiv.innerHTML = `
         <h2>${researcherData.name}</h2>
         <p>Total Publications: ${researcherData.publications.length}</p>
         <p>Total Citations: ${totalCitations}</p>
+        <p>H-Index: ${hIndex}</p>
+        <p>i10-Index: ${i10Index}</p>
     `;
     
 

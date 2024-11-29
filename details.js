@@ -57,20 +57,42 @@ function displayBasicInfo(researcherData) {
     const publications = researcherData.publications;
     const citationCounts = publications.map(pub => pub['is-referenced-by-count'] || 0);
     
+    // Calculate total citations
     const totalCitations = citationCounts.reduce((a, b) => a + b, 0);
-    const averageCitations = citationCounts.length > 0 ? 
-        (totalCitations / citationCounts.length).toFixed(2) : 0;
+    
+    // Calculate average citations
+    const averageCitations = citationCounts.length > 0 ?
+      (totalCitations / citationCounts.length).toFixed(2) : 0;
+    
+    // Calculate h-index
+    const sortedCitations = [...citationCounts].sort((a, b) => b - a);
+    let hIndex = 0;
+    for (let i = 0; i < sortedCitations.length; i++) {
+      if (sortedCitations[i] >= (i + 1)) {
+        hIndex = i + 1;
+      } else {
+        break;
+      }
+    }
+    
+    // Calculate i10-index (number of publications with at least 10 citations)
+    const i10Index = citationCounts.filter(count => count >= 10).length;
+    
+    // Find highest and lowest citations
     const highestCitations = Math.max(...citationCounts);
     const lowestCitations = Math.min(...citationCounts);
-
+    
+    // Update basic info div
     const basicInfoDiv = document.getElementById('basicInfo');
     basicInfoDiv.innerHTML = `
-        <h2>${researcherData.name}</h2>
-        <p>ORCID: ${orcid}</p>
-        <p>Total Publications: ${publications.length}</p>
-        <p>Total Citations: ${totalCitations}</p>
+      <h2>${researcherData.name}</h2>
+      <p>ORCID: ${researcherData.orcid}</p>
+      <p>Total Publications: ${publications.length}</p>
+      <p>Total Citations: ${totalCitations}</p>
+      <p>H-Index: ${hIndex}</p>
+      <p>i10-Index: ${i10Index}</p>
     `;
-}
+  }
 
 function displayPublications(researcherData) {
     // Create a global or module-scoped object to store abstracts
