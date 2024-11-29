@@ -106,9 +106,13 @@ function displayBasicInfo(researcherData) {
 
 
 
+// Configuration (add these at the top of the file)
+const SEMANTIC_SCHOLAR_API = 'https://api.semanticscholar.org/graph/v1/paper/';
+
 function displayPublications(researcherData) {
-    // Create a global or module-scoped object to store abstracts
+    // Create a global or module-scoped object to store abstracts and citations
     window.publicationAbstracts = window.publicationAbstracts || {};
+    window.publicationCitations = window.publicationCitations || {};
  
     const publicationsDiv = document.getElementById('publicationsList');
     let html = '<h2>Publications</h2>';
@@ -119,7 +123,7 @@ function displayPublications(researcherData) {
             const yearB = b.published?.['date-parts']?.[0]?.[0] || 0;
             return yearB - yearA; // Sort by year descending
         })
-        .forEach((pub, index) => {
+        .forEach((pub) => {
             // Store abstract in the global abstracts object
             if (pub.DOI && pub.abstract) {
                 window.publicationAbstracts[pub.DOI] = pub.abstract;
@@ -133,6 +137,30 @@ function displayPublications(researcherData) {
                 }
                 return `${author.given} ${author.family}`;
             }).join(', ');
+
+            // Fetch citation count
+            const fetchCitationCount = async (doi) => {
+                try {
+                    const response = await fetch(`${SEMANTIC_SCHOLAR_API}${doi}/citations?fields=title&limit=1`);
+                    const data = await response.json();
+                    return data.total || 0;
+                } catch (error) {
+                    console.error('Error fetching citation count:', error);
+                    return 0;
+                }
+            };
+
+            // Add citation count to the publications
+            let citationCountHtml = '<p><strong>Citations:</strong> Loading...</p>';
+            
+            if (pub.DOI) {
+                fetchCitationCount(pub.DOI).then(count => {
+                    const citationElement = document.querySelector(`[data-doi="${pub.DOI}"] .citation-count`);
+                    if (citationElement) {
+                        citationElement.textContent = `Citations: ${count}`;
+                    }
+                });
+            }
  
             html += `
                 <div class="publication-item" data-doi="${pub.DOI || ''}">
@@ -140,13 +168,19 @@ function displayPublications(researcherData) {
                     <p><strong>Authors:</strong> ${authors}</p>
                     <p><strong>Published:</strong> ${pub.published ? pub.published['date-parts'][0][0] : 'N/A'}</p>
                     <p><strong>DOI:</strong> <a href="https://doi.org/${pub.DOI}" target="_blank">${pub.DOI}</a></p>
-                    <p><strong>Citations:</strong> ${pub['is-referenced-by-count'] || 'N/A'}</p>
                     ${pub['container-title'] ? `<p><strong>Journal:</strong> ${pub['container-title'][0]}</p>` : ''}
                     
-                    ${pub.abstract ? `
-                        <button class="toggle-abstract" data-doi="${pub.DOI}">About</button>
+                     <p><strong>Citations:</strong> ${pub['is-referenced-by-count'] || 'N/A'}</p>
+                    
+                    ${pub.DOI ? `
+                        <div class="publication-actions">
+                            ${pub.abstract ? `
+                                <button class="toggle-abstract" data-doi="${pub.DOI}">About</button>
+                            ` : ''}
+                            <button class="view-citations" data-doi="${pub.DOI}">View Citations</button>
+                        </div>
                         <div class="abstract-content" data-doi="${pub.DOI}" style="display: none;">
-                            <p><strong>Abstract:</strong> ${pub.abstract}</p>
+                            <p><strong>Abstract:</strong> ${pub.abstract || ''}</p>
                         </div>
                     ` : ''}
                 </div>
@@ -155,8 +189,9 @@ function displayPublications(researcherData) {
     
     publicationsDiv.innerHTML = html;
  
-    // Add event listeners for abstract toggle buttons
-    publicationsDiv.addEventListener('click', function(event) {
+    // Add event listeners for abstract and citations toggle buttons
+    publicationsDiv.addEventListener('click', async function(event) {
+        // Abstract toggle
         if (event.target.classList.contains('toggle-abstract')) {
             const doi = event.target.getAttribute('data-doi');
             const abstractContent = document.querySelector(`.abstract-content[data-doi="${doi}"]`);
@@ -172,8 +207,15 @@ function displayPublications(researcherData) {
                 }
             }
         }
+
+        // Citations view
+        if (event.target.classList.contains('view-citations')) {
+            const doi = event.target.getAttribute('data-doi');
+            window.location.href = `citations.html?doi=${encodeURIComponent(doi)}`;
+        }
     });
- }
+}
+
  
  // Helper function to retrieve an abstract by DOI
  function getPublicationAbstract(doi) {
