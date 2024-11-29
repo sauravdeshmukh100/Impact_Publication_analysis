@@ -312,7 +312,8 @@ function displayPublications(publications, divId) {
                 <div class="publication-item">
                     <h4>${pub.title ? pub.title[0] : 'Untitled'}</h4>
                     <p><strong>Published:</strong> ${pub.published ? pub.published['date-parts'][0][0] : 'N/A'}</p>
-                    <p><strong>DOI:</strong> <a href="https:
+                    <p><strong>DOI:</strong> <a href="https://doi.org/${pub.DOI}" target="_blank">${pub.DOI}</a></p>
+                    <p><strong>Citations:</strong> ${pub['is-referenced-by-count'] || 'N/A'}</p>
                 </div>
             `;
         });

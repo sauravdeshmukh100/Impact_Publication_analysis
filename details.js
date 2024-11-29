@@ -7,6 +7,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const orcid = urlParams.get('orcid');
 const name = urlParams.get('name');
 
+
+
+
 // Get researcher data from session storage or fetch if not available
 async function getResearcherData() {
     let researcherData = sessionStorage.getItem(`researcher_${orcid}`);
@@ -103,6 +106,7 @@ function displayPublications(researcherData) {
                     <p><strong>Authors:</strong> ${authors}</p>
                     <p><strong>Published:</strong> ${pub.published ? pub.published['date-parts'][0][0] : 'N/A'}</p>
                     <p><strong>DOI:</strong> <a href="https://doi.org/${pub.DOI}" target="_blank">${pub.DOI}</a></p>
+                    <p><strong>Citations:</strong> ${pub['is-referenced-by-count'] || 'N/A'}</p>
                     ${pub['container-title'] ? `<p><strong>Journal:</strong> ${pub['container-title'][0]}</p>` : ''}
                     
                     ${pub.abstract ? `
