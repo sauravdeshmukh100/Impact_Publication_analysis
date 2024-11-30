@@ -109,13 +109,18 @@ function displayBasicInfo(researcherData) {
 // Configuration (add these at the top of the file)
 const SEMANTIC_SCHOLAR_API = 'https://api.semanticscholar.org/graph/v1/paper/';
 
+
 function displayPublications(researcherData) {
-    // Create a global or module-scoped object to store abstracts and citations
-    window.publicationAbstracts = window.publicationAbstracts || {};
-    window.publicationCitations = window.publicationCitations || {};
+    // Ensure publicationAbstracts exists in localStorage
+    if (!localStorage.getItem('publicationAbstracts')) {
+        localStorage.setItem('publicationAbstracts', JSON.stringify({}));
+    }
  
     const publicationsDiv = document.getElementById('publicationsList');
     let html = '<h2>Publications</h2>';
+    
+    // Collect all abstracts
+    const allAbstracts = [];
     
     researcherData.publications
         .sort((a, b) => {
@@ -124,20 +129,22 @@ function displayPublications(researcherData) {
             return yearB - yearA; // Sort by year descending
         })
         .forEach((pub) => {
-            // Store abstract in the global abstracts object
+            // Store abstract in localStorage if it exists
             if (pub.DOI && pub.abstract) {
-                window.publicationAbstracts[pub.DOI] = pub.abstract;
+                const abstracts = JSON.parse(localStorage.getItem('publicationAbstracts') || '{}');
+                abstracts[pub.DOI] = pub.abstract;
+                localStorage.setItem('publicationAbstracts', JSON.stringify(abstracts));
+                
+                // Collect abstracts for keyword analysis
+                allAbstracts.push(pub.abstract);
             }
- 
             const authors = pub.author.map(author => {
                 if (author.ORCID) {
                     const authorOrcid = author.ORCID.replace('http://orcid.org/', '');
-                    // Create link to details page for co-authors
                     return `<a href="details.html?orcid=${authorOrcid}&name=${encodeURIComponent(`${author.given} ${author.family}`)}" class="author-link">${author.given} ${author.family}</a>`;
                 }
                 return `${author.given} ${author.family}`;
             }).join(', ');
-
             // Fetch citation count
             const fetchCitationCount = async (doi) => {
                 try {
@@ -149,7 +156,7 @@ function displayPublications(researcherData) {
                     return 0;
                 }
             };
-
+ 
             // Add citation count to the publications
             let citationCountHtml = '<p><strong>Citations:</strong> Loading...</p>';
             
@@ -161,7 +168,6 @@ function displayPublications(researcherData) {
                     }
                 });
             }
- 
             html += `
                 <div class="publication-item" data-doi="${pub.DOI || ''}">
                     <h3>${pub.title ? pub.title[0] : 'Untitled'}</h3>
@@ -188,7 +194,6 @@ function displayPublications(researcherData) {
         });
     
     publicationsDiv.innerHTML = html;
- 
     // Add event listeners for abstract and citations toggle buttons
     publicationsDiv.addEventListener('click', async function(event) {
         // Abstract toggle
@@ -207,14 +212,125 @@ function displayPublications(researcherData) {
                 }
             }
         }
-
+ 
         // Citations view
         if (event.target.classList.contains('view-citations')) {
             const doi = event.target.getAttribute('data-doi');
             window.location.href = `citations.html?doi=${encodeURIComponent(doi)}`;
         }
     });
-}
+
+
+    
+    displayResearchDomains(researcherData.publications);
+     
+
+
+     
+    // Extract and display keywords
+    // const keywords = extractKeywords(allAbstracts);
+    // displayResearchDomains(researcherData.publications);
+ }
+ 
+ function extractResearchDomains(publications) {
+    // Predefined research domains with associated keywords
+    const domainDefinitions = [
+        {
+            name: 'Computer Science',
+            keywords: ['machine learning', 'artificial intelligence', 'deep learning', 'neural networks', 'algorithm', 'data science', 'computer vision', 'natural language processing', 'deep neural', 'reinforcement learning']
+        },
+        {
+            name: 'Biology',
+            keywords: ['genomics', 'molecular biology', 'gene', 'protein', 'cellular', 'ecosystem', 'biodiversity', 'genetic', 'mutation', 'genome']
+        },
+        {
+            name: 'Physics',
+            keywords: ['quantum', 'particle physics', 'astronomy', 'cosmology', 'gravitational', 'relativity', 'nuclear', 'electromagnetic', 'wavelength', 'spectrum']
+        },
+        {
+            name: 'Chemistry',
+            keywords: ['molecular structure', 'chemical reaction', 'synthesis', 'catalyst', 'polymer', 'organic chemistry', 'inorganic', 'chemical bond', 'molecular weight', 'spectroscopy']
+        },
+        {
+            name: 'Medical Research',
+            keywords: ['clinical trial', 'medical treatment', 'disease', 'patient', 'diagnostic', 'therapeutic', 'epidemiology', 'medical intervention', 'health outcomes', 'pathology']
+        },
+        {
+            name: 'Environmental Science',
+            keywords: ['climate change', 'ecosystem', 'sustainability', 'environmental impact', 'biodiversity', 'conservation', 'pollution', 'renewable energy', 'carbon', 'ecological']
+        },
+        {
+            name: 'Psychology',
+            keywords: ['cognitive', 'behavioral', 'mental health', 'neuropsychology', 'social psychology', 'psychological', 'perception', 'emotional', 'psychological disorder', 'neurological']
+        },
+        {
+            name: 'Economics',
+            keywords: ['economic model', 'market', 'financial', 'economic policy', 'investment', 'economic growth', 'monetary', 'fiscal policy', 'economic analysis', 'economic development']
+        },
+        {
+            name: 'Engineering',
+            keywords: ['design', 'mechanical', 'electrical', 'structural', 'engineering solution', 'innovative design', 'engineering process', 'technical', 'system design', 'optimization']
+        }
+    ];
+ 
+    // Combine all publication titles and abstracts
+    const combinedText = publications
+        .map(pub => `${pub.title ? pub.title[0] : ''} ${pub.abstract || ''}`)
+        .join(' ')
+        .toLowerCase();
+ 
+    // Score domains based on keyword matches
+    const domainScores = domainDefinitions.map(domain => {
+        const matches = domain.keywords.filter(keyword => 
+            combinedText.includes(keyword.toLowerCase())
+        );
+        
+        return {
+            name: domain.name,
+            score: matches.length,
+            matchedKeywords: matches
+        };
+    });
+ 
+    // Sort domains by score and get top domains
+    const topDomains = domainScores
+        .sort((a, b) => b.score - a.score)
+        .filter(domain => domain.score > 0)
+        .slice(0, 3);  // Top 3 domains
+ 
+    return topDomains;
+ }
+ 
+ function displayResearchDomains(publications) {
+    const researchDomains = extractResearchDomains(publications);
+ 
+    // Create or get the domains container
+    let domainsContainer = document.getElementById('researchDomains');
+    if (!domainsContainer) {
+        domainsContainer = document.createElement('div');
+        domainsContainer.id = 'researchDomains';
+        domainsContainer.className = 'research-domains-container';
+        
+        // Insert it after the publications list
+        const publicationsDiv = document.getElementById('publicationsList');
+        publicationsDiv.insertAdjacentElement('afterend', domainsContainer);
+    }
+ 
+    // Create HTML for domains
+    const domainsHtml = `
+        <h3>Research Domains</h3>
+        <div class="domains-list">
+            ${researchDomains.map(domain => `
+                <div class="domain-tag">
+                    <span class="domain-name">${domain.name}</span>
+                    <span class="domain-score" title="Number of matching keywords">${domain.score}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    domainsContainer.innerHTML = domainsHtml;
+ }
 
  
  // Helper function to retrieve an abstract by DOI
